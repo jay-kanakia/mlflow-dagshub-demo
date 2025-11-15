@@ -9,9 +9,13 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import dagshub
+
+
+dagshub.init(repo_owner='jay-kanakia', repo_name='mlflow-dagshub-demo', mlflow=True)
 
 # MLflow Tracking URI
-#mlflow.set_tracking_uri("http://127.0.0.1:5000")   # Make sure MLflow server is running!
+mlflow.set_tracking_uri("https://dagshub.com/jay-kanakia/mlflow-dagshub-demo.mlflow")   # Make sure MLflow server is running!
 
 
 # Load data
@@ -24,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42)
 
 max_depth = 2
-n_estimators = 100   # not used by DecisionTree but kept for logging if needed
+n_estimators = 50   # not used by DecisionTree but kept for logging if needed
 
 # Train decision tree model
 rf = RandomForestClassifier(max_depth=max_depth,n_estimators=n_estimators)
@@ -43,7 +47,7 @@ sns.heatmap(cm,annot=True,cmap='viridis')
 plt.savefig('cm.jpeg')
 
 # Experiment Setup
-mlflow.set_experiment('my_exp')
+mlflow.set_experiment('dagshub_demo')
 # Start MLflow run
 with mlflow.start_run(run_name='rf_model'):
     # Log parameters
@@ -52,5 +56,5 @@ with mlflow.start_run(run_name='rf_model'):
     mlflow.log_param('n_estimator',n_estimators)
     #mlflow.log_artifact('cm.jpeg')
     #mlflow.log_artifact(__file__)
-    mlflow.sklearn.log_model(rf,'random_forest')
+    #mlflow.sklearn.log_model(rf,'random_forest')
     mlflow.set_tag('author','jay')
